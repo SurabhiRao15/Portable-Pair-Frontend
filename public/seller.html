@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-container input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Seller Page</h1>
+    <div class="input-container">
+        
+        
+        <label for="sellerId">Seller ID:</label>
+        <input type="text" id="sellerId" placeholder="Enter Seller ID">
+        
+        <label for="sellerName">Seller Name:</label>
+        <input type="text" id="sellerName" placeholder="Enter Seller Name">
+        
+        <button class="button" onclick="generateQRCode()">Generate QR Code</button>
+        <button class="button" onclick="saveQRCode()">Save QR Code</button>
+        <button class="button" onclick="redirectToVerifyPage()">Update QR Code</button>
+    </div>
+
+    <div id="qrcode"></div>
+
+    <!-- QR Code Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            const sellerId = document.getElementById("sellerId").value;
+            const sellerName = document.getElementById("sellerName").value;
+        
+            if (!sellerId || !sellerName) {
+                alert('Please fill in all fields to generate a QR Code.');
+                return;
+            }
+        
+            const qrData = {
+                sellerId: sellerId,
+                sellerName: sellerName
+            };
+        
+            const qrDataJson = JSON.stringify(qrData); // This will create a JSON string
+        
+            console.log(qrDataJson); // You can print it to check
+        
+            document.getElementById("qrcode").innerHTML = ""; // Clear previous QR code
+        
+            // Generate the QR code with the JSON string
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrDataJson, // Use the JSON string here
+                width: 200,
+                height: 200
+            });
+        }
+        
+
+        function saveQRCode() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) {
+                alert('Please generate a QR code first.');
+                return;
+            }
+
+            // Get the Product ID to name the file
+            const sellerId = document.getElementById("sellerId").value;
+            if (!sellerId) {
+                alert('Please enter a Product ID to save the QR Code.');
+                return;
+            }
+
+            const qrCodeDataUrl = canvas.toDataURL("image/png");
+
+            // Create a download link
+            const link = document.createElement('a');
+            link.href = qrCodeDataUrl;
+            link.download = `${sellerId}.png`; // Name the file with Product ID
+            document.body.appendChild(link);
+            link.click(); // Trigger download
+            document.body.removeChild(link); // Clean up
+
+            // Optionally: Send the QR code data to the server
+            fetch('/save-qrcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ qrDataUrl: qrCodeDataUrl })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('QR Code saved successfully....');
+                } else {
+                    alert('QR Code saved successfully.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving the QR Code.');
+            });
+        }
+        function redirectToVerifyPage() {
+            // Redirect to verify.html
+            window.location.href = "verify.html";
+        }
+    </script>
+</body>
+</html>

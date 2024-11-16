@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-container input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Verification</h1>
+    <div class="input-container">
+        <label for="productId">Product ID:</label>
+        <input type="text" id="productId" placeholder="Enter Product ID">
+        <button class="button" onclick="fetchQRCode()">Get QR Code</button>
+    </div>
+    <div id="qrcode"></div>
+
+    <script>
+        function fetchQRCode() {
+            const productId = document.getElementById("productId").value;
+
+            if (!productId) {
+                alert('Please enter a Product ID.');
+                return;
+            }
+
+            // Fetch the QR code image from the server
+            const qrCodeImagePath = `qrcodes/${productId}.png`; // Path where the QR codes are stored
+            const img = document.createElement('img');
+            img.src = qrCodeImagePath;
+            img.alt = 'QR Code';
+            img.onload = function() {
+                document.getElementById("qrcode").innerHTML = ''; // Clear previous QR code
+                document.getElementById("qrcode").appendChild(img);
+            };
+            img.onerror = function() {
+                alert('QR Code not found. Please check the Product ID.');
+                document.getElementById("qrcode").innerHTML = ''; // Clear previous QR code
+            };
+        }
+    </script>
+</body>
+</html>
