@@ -115,8 +115,9 @@
             displayDiv.innerHTML = `<img src="${dataURL}" alt="QR Code">`;
         }
 
+        /*
         async function sendTransactionToRandomNode(data) {
-            var ports = [3001, 3002];
+            var ports = [3001];
             var randomPort = ports[Math.floor(Math.random() * ports.length)];
             var url = `http://localhost:${randomPort}/transaction/broadcast`;
         
@@ -141,23 +142,25 @@
                 return null;
             }
         }
+
+        */
         
         // Function to generate the final QR code
 // Function to select a random blockchain node port and send the transaction
 async function sendTransactionToRandomNode(combinedData, productId) {
-    var ports = [3001, 3002];
+    var ports = [3001];
     var randomPort = ports[Math.floor(Math.random() * ports.length)];
     var url = `http://localhost:${randomPort}/transaction/broadcast`;
 
     // varructing the data payload in the required format
     var data = {
-        manufacturerId: combinedData.id,
-        sellerId: combinedData.id,
+        manufacturerId: combinedData.manufacturerId,
+        sellerId: combinedData.sellerId,
         ProductCost: combinedData.ProductCost,
         productId: productId,
         productName: combinedData.productName,
         batchNumber: combinedData.batchNumber,
-        sellerName: combinedData.name,
+        sellerName: combinedData.sellerName,
     };
 
     try {
