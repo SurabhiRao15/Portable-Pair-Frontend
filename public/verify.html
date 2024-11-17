@@ -115,8 +115,9 @@
             displayDiv.innerHTML = `<img src="${dataURL}" alt="QR Code">`;
         }
 
+        /*
         async function sendTransactionToRandomNode(data) {
-            var ports = [3001, 3002];
+            var ports = [3001];
             var randomPort = ports[Math.floor(Math.random() * ports.length)];
             var url = `http://localhost:${randomPort}/transaction/broadcast`;
         
@@ -141,23 +142,26 @@
                 return null;
             }
         }
+
+        */
         
         // Function to generate the final QR code
 // Function to select a random blockchain node port and send the transaction
 async function sendTransactionToRandomNode(combinedData, productId) {
-    var ports = [3001, 3002];
+    var ports = [3001];
     var randomPort = ports[Math.floor(Math.random() * ports.length)];
     var url = `http://localhost:${randomPort}/transaction/broadcast`;
+    var url1 = `http://localhost:${randomPort}/mine`;
 
     // varructing the data payload in the required format
     var data = {
-        manufacturerId: combinedData.id,
-        sellerId: combinedData.id,
+        manufacturerId: combinedData.manufacturerId,
+        sellerId: combinedData.sellerId,
         ProductCost: combinedData.ProductCost,
         productId: productId,
         productName: combinedData.productName,
         batchNumber: combinedData.batchNumber,
-        sellerName: combinedData.name,
+        sellerName: combinedData.sellerName,
     };
 
     try {
@@ -174,7 +178,19 @@ async function sendTransactionToRandomNode(combinedData, productId) {
         }
 
         var result = await response.json();
-        return result; // Successful transaction response
+
+        var response = await fetch(url1, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        // Assuming the response is in JSON format
+        var data = await response.json();
+
+        return data;
+         // Successful transaction response
     } catch (error) {
         console.error("Error in transaction:", error);
         alert("Transaction failed. Please try again.");
@@ -206,14 +222,21 @@ async function generateFinalQRCode() {
     // Send transaction to a randomly selected blockchain node
     var transactionResult = await sendTransactionToRandomNode(combinedData, productId);
 
+    const combinedResult = {
+        hash: transactionResult.block.hash,
+        transaction: transactionResult.block.transactions[1]
+    };
+
+    console.log(combinedResult);
+
     if (transactionResult) {
         // Combine data for QR code display
-        var combinedData = `Manufacturer Data: ${combinedData.manufacturerId}\nSeller Data: ${combinedData.sellerId}\nProduct ID: ${productId}`;
+        var combinedData = JSON.stringify(combinedResult);
 
         // Clear previous QR code and generate a new one with combined data
         document.getElementById("qrcode").innerHTML = "";
         new QRCode(document.getElementById("qrcode"), {
-            text: combinedDataJson,
+            text: combinedData,
             width: 200,
             height: 200,
         });
