@@ -45,6 +45,9 @@
         
         <label for="sellerName">Seller Name:</label>
         <input type="text" id="sellerName" placeholder="Enter Seller Name">
+
+        <label for="productCost">Seller Name:</label>
+        <input type="text" id="productCost" placeholder="Enter Seller Name">
         
         <button class="button" onclick="generateQRCode()">Generate QR Code</button>
         <button class="button" onclick="saveQRCode()">Save QR Code</button>
@@ -59,6 +62,7 @@
         function generateQRCode() {
             const sellerId = document.getElementById("sellerId").value;
             const sellerName = document.getElementById("sellerName").value;
+            const productCost = document.getElementById("productCost").value;
         
             if (!sellerId || !sellerName) {
                 alert('Please fill in all fields to generate a QR Code.');
@@ -67,7 +71,8 @@
         
             const qrData = {
                 sellerId: sellerId,
-                sellerName: sellerName
+                sellerName: sellerName,
+                productCost: productCost
             };
         
             const qrDataJson = JSON.stringify(qrData); // This will create a JSON string
