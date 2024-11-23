@@ -40,6 +40,11 @@
     </div>
     <div id="qrcode"></div>
 
+    <h1>Open Block Explorer</h1>
+    <button class="button" onclick="window.open('http://localhost:3001/block-explorer', '_blank')">
+        Open Block Explorer
+    </button>
+
     <script>
         function fetchQRCode() {
             const productId = document.getElementById("productId").value;
